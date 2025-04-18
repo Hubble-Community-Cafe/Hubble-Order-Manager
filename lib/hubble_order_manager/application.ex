@@ -7,16 +7,17 @@ defmodule HubbleOrderManager.Application do
 
   @impl true
   def start(_type, _args) do
+    # Load the .env file
+    Dotenv.load()
+
     children = [
       HubbleOrderManager.Repo,
       {Ecto.Migrator,
        repos: Application.fetch_env!(:hubble_order_manager, :ecto_repos), skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:hubble_order_manager, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: HubbleOrderManager.PubSub},
-      # Start a worker by calling: HubbleOrderManager.Worker.start_link(arg)
-      # {HubbleOrderManager.Worker, arg},
-      # Start to serve requests, typically the last entry
-      HubbleOrderManagerWeb.Endpoint
+      HubbleOrderManagerWeb.Endpoint,
+      {HubbleOrderManager.OrderPropegation, []}
     ]
 
     :ets.new(:public_key_cache, [:named_table, :public, :set, {:read_concurrency, true}])
