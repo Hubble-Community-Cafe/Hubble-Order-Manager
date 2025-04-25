@@ -1,4 +1,4 @@
-defmodule HubbleOrderManager.Application do
+defmodule Removeme.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
@@ -7,24 +7,22 @@ defmodule HubbleOrderManager.Application do
 
   @impl true
   def start(_type, _args) do
-    # Load the .env file
-    Dotenv.load()
-
     children = [
-      HubbleOrderManager.Repo,
+      RemovemeWeb.Telemetry,
+      Removeme.Repo,
       {Ecto.Migrator,
-       repos: Application.fetch_env!(:hubble_order_manager, :ecto_repos), skip: skip_migrations?()},
-      {DNSCluster, query: Application.get_env(:hubble_order_manager, :dns_cluster_query) || :ignore},
-      {Phoenix.PubSub, name: HubbleOrderManager.PubSub},
-      HubbleOrderManagerWeb.Endpoint,
-      {HubbleOrderManager.OrderPropegation, []}
+       repos: Application.fetch_env!(:removeme, :ecto_repos), skip: skip_migrations?()},
+      {DNSCluster, query: Application.get_env(:removeme, :dns_cluster_query) || :ignore},
+      {Phoenix.PubSub, name: Removeme.PubSub},
+      # Start a worker by calling: Removeme.Worker.start_link(arg)
+      # {Removeme.Worker, arg},
+      # Start to serve requests, typically the last entry
+      RemovemeWeb.Endpoint
     ]
-
-    :ets.new(:public_key_cache, [:named_table, :public, :set, {:read_concurrency, true}])
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: HubbleOrderManager.Supervisor]
+    opts = [strategy: :one_for_one, name: Removeme.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
@@ -32,7 +30,7 @@ defmodule HubbleOrderManager.Application do
   # whenever the application is updated.
   @impl true
   def config_change(changed, _new, removed) do
-    HubbleOrderManagerWeb.Endpoint.config_change(changed, removed)
+    RemovemeWeb.Endpoint.config_change(changed, removed)
     :ok
   end
 

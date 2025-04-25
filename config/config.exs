@@ -7,20 +7,33 @@
 # General application configuration
 import Config
 
-config :hubble_order_manager,
-  ecto_repos: [HubbleOrderManager.Repo],
+config :removeme, :scopes,
+  user: [
+    default: true,
+    module: Removeme.Accounts.Scope,
+    assign_key: :current_scope,
+    access_path: [:user, :id],
+    schema_key: :user_id,
+    schema_type: :id,
+    schema_table: :users,
+    test_data_fixture: Removeme.AccountsFixtures,
+    test_login_helper: :register_and_log_in_user
+  ]
+
+config :removeme,
+  ecto_repos: [Removeme.Repo],
   generators: [timestamp_type: :utc_datetime]
 
 # Configures the endpoint
-config :hubble_order_manager, HubbleOrderManagerWeb.Endpoint,
+config :removeme, RemovemeWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
-    formats: [html: HubbleOrderManagerWeb.ErrorHTML, json: HubbleOrderManagerWeb.ErrorJSON],
+    formats: [html: RemovemeWeb.ErrorHTML, json: RemovemeWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: HubbleOrderManager.PubSub,
-  live_view: [signing_salt: "w9gK8W9g"]
+  pubsub_server: Removeme.PubSub,
+  live_view: [signing_salt: "VZKfpAFO"]
 
 # Configures the mailer
 #
@@ -29,12 +42,12 @@ config :hubble_order_manager, HubbleOrderManagerWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :hubble_order_manager, HubbleOrderManager.Mailer, adapter: Swoosh.Adapters.Local
+config :removeme, Removeme.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",
-  hubble_order_manager: [
+  removeme: [
     args:
       ~w(js/app.js --bundle --target=es2022 --outdir=../priv/static/assets/js --external:/fonts/* --external:/images/*),
     cd: Path.expand("../assets", __DIR__),
@@ -43,8 +56,8 @@ config :esbuild,
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "4.1.4",
-  hubble_order_manager: [
+  version: "4.0.9",
+  removeme: [
     args: ~w(
       --input=assets/css/app.css
       --output=priv/static/assets/css/app.css

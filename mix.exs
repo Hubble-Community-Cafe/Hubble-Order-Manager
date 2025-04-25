@@ -1,9 +1,9 @@
-defmodule HubbleOrderManager.MixProject do
+defmodule Removeme.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :hubble_order_manager,
+      app: :removeme,
       version: "0.1.0",
       elixir: "~> 1.15",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -19,7 +19,7 @@ defmodule HubbleOrderManager.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {HubbleOrderManager.Application, []},
+      mod: {Removeme.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end
@@ -33,6 +33,7 @@ defmodule HubbleOrderManager.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:bcrypt_elixir, "~> 3.0"},
       {:phoenix, "~> 1.8.0-rc.0", override: true},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
@@ -40,6 +41,7 @@ defmodule HubbleOrderManager.MixProject do
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 1.0"},
+      {:floki, ">= 0.30.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:esbuild, "~> 0.9", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
@@ -52,11 +54,12 @@ defmodule HubbleOrderManager.MixProject do
        depth: 1},
       {:swoosh, "~> 1.16"},
       {:req, "~> 0.5"},
+      {:telemetry_metrics, "~> 1.0"},
+      {:telemetry_poller, "~> 1.0"},
+      {:gettext, "~> 0.26"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
-      {:bandit, "~> 1.5"},
-      {:httpoison, "~> 2.0"},
-      {:dotenv, "~> 3.0"}
+      {:bandit, "~> 1.5"}
     ]
   end
 
@@ -73,10 +76,10 @@ defmodule HubbleOrderManager.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind hubble_order_manager", "esbuild hubble_order_manager"],
+      "assets.build": ["tailwind removeme", "esbuild removeme"],
       "assets.deploy": [
-        "tailwind hubble_order_manager --minify",
-        "esbuild hubble_order_manager --minify",
+        "tailwind removeme --minify",
+        "esbuild removeme --minify",
         "phx.digest"
       ]
     ]

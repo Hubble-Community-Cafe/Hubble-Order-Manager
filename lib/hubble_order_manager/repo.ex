@@ -1,5 +1,5 @@
-defmodule HubbleOrderManager.Repo do
+defmodule Removeme.Repo do
   use Ecto.Repo,
-    otp_app: :hubble_order_manager,
+    otp_app: :removeme,
     adapter: Ecto.Adapters.SQLite3
 end

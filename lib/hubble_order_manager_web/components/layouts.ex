@@ -1,4 +1,4 @@
-defmodule HubbleOrderManagerWeb.Layouts do
+defmodule RemovemeWeb.Layouts do
   @moduledoc """
   This module holds different layouts used by your application.
 
@@ -7,20 +7,41 @@ defmodule HubbleOrderManagerWeb.Layouts do
   application router. The "app" layout is rendered as component
   in regular views and live views.
   """
-  use HubbleOrderManagerWeb, :html
+  use RemovemeWeb, :html
 
   embed_templates "layouts/*"
 
   def app(assigns) do
     ~H"""
     <header class="navbar px-4 sm:px-6 lg:px-8">
-      <div class="flex-1 flex justify-center w-full">
-        <img src={~p"/images/Hubble-Logo.png"} width="200" />
+      <div class="flex-1">
+        <a href="/" class="flex-1 flex items-center gap-2">
+          <img src={~p"/images/logo.svg"} width="36" />
+          <span class="text-sm font-semibold">v{Application.spec(:phoenix, :vsn)}</span>
+        </a>
+      </div>
+      <div class="flex-none">
+        <ul class="flex flex-column px-1 space-x-4 items-center">
+          <li>
+            <a href="https://phoenixframework.org/" class="btn btn-ghost">Website</a>
+          </li>
+          <li>
+            <a href="https://github.com/phoenixframework/phoenix" class="btn btn-ghost">GitHub</a>
+          </li>
+          <li>
+            <.theme_toggle />
+          </li>
+          <li>
+            <a href="https://hexdocs.pm/phoenix/overview.html" class="btn btn-primary">
+              Get Started <span aria-hidden="true">&rarr;</span>
+            </a>
+          </li>
+        </ul>
       </div>
     </header>
 
-    <main class="px-4 py-5 sm:px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl space-y-4 flex flex-col items-center">
+    <main class="px-4 py-20 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl space-y-4">
         {render_slot(@inner_block)}
       </div>
     </main>
@@ -48,24 +69,24 @@ defmodule HubbleOrderManagerWeb.Layouts do
       <.flash
         id="client-error"
         kind={:error}
-        title="We can't find the internet"
+        title={gettext("We can't find the internet")}
         phx-disconnected={show(".phx-client-error #client-error") |> JS.remove_attribute("hidden")}
         phx-connected={hide("#client-error") |> JS.set_attribute({"hidden", ""})}
         hidden
       >
-        Attempting to reconnect
+        {gettext("Attempting to reconnect")}
         <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 motion-safe:animate-spin" />
       </.flash>
 
       <.flash
         id="server-error"
         kind={:error}
-        title="Something went wrong!"
+        title={gettext("Something went wrong!")}
         phx-disconnected={show(".phx-client-error #client-error") |> JS.remove_attribute("hidden")}
         phx-connected={hide("#client-error") |> JS.set_attribute({"hidden", ""})}
         hidden
       >
-        Hang in there while we get back on track
+        {gettext("Hang in there while we get back on track")}
         <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 motion-safe:animate-spin" />
       </.flash>
     </div>

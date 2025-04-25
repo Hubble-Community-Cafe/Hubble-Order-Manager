@@ -1,4 +1,4 @@
-defmodule HubbleOrderManagerWeb.ErrorJSON do
+defmodule RemovemeWeb.ErrorJSON do
   @moduledoc """
   This module is invoked by your endpoint in case of errors on JSON requests.
 

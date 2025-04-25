@@ -1,55 +1,35 @@
-defmodule HubbleOrderManagerWeb.Router do
-  use HubbleOrderManagerWeb, :router
+defmodule RemovemeWeb.Router do
+  use RemovemeWeb, :router
 
-  import HubbleOrderManagerWeb.Auth
+  # import RemovemeWeb.UserAuth
 
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
-    plug :put_root_layout, html: {HubbleOrderManagerWeb.Layouts, :root}
-    plug :debug
+    plug :put_root_layout, html: {RemovemeWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug :fetch_current_session
+    # plug :fetch_current_scope_for_user
   end
 
   pipeline :api do
     plug :accepts, ["json"]
   end
 
-  scope "/", HubbleOrderManagerWeb do
-    pipe_through [:browser]
+  scope "/", RemovemeWeb do
+    pipe_through :browser
 
-    live "/", OrderLive.Index, :index
+    get "/", PageController, :home
   end
-
-  scope "/", HubbleOrderManagerWeb do
-    pipe_through [:browser]
-
-    live_session :current_user do
-      live "/login", AuthLive.Login, :new
-    end
-
-    post "/test", SessionController, :test
-    post "/login", SessionController, :create
-  end
-
-  # scope "/", HubbleOrderManagerWeb do
-  #   pipe_through [:browser, :require_authenticated_session]
-
-  #   live "/backoffice", OrderLive.Form, :new
-  # end
 
   # Other scopes may use custom stacks.
-  scope "/api", HubbleOrderManagerWeb do
-    pipe_through :api
-
-    post "/orders/webhook", OrderWebhook, :home
-  end
+  # scope "/api", RemovemeWeb do
+  #   pipe_through :api
+  # end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
-  if Application.compile_env(:hubble_order_manager, :dev_routes) do
+  if Application.compile_env(:removeme, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put
     # it behind authentication and allow only admins to access it.
     # If your application does not have an admins-only section yet,
@@ -60,8 +40,34 @@ defmodule HubbleOrderManagerWeb.Router do
     scope "/dev" do
       pipe_through :browser
 
-      live_dashboard "/dashboard", metrics: HubbleOrderManagerWeb.Telemetry
+      live_dashboard "/dashboard", metrics: RemovemeWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
+  end
+
+  ## Authentication routes
+
+  scope "/", RemovemeWeb do
+    pipe_through [:browser]
+
+    live_session :require_authenticated_user do
+      live "/users/settings", UserLive.Settings, :edit
+      live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
+    end
+
+    post "/users/update-password", UserSessionController, :update_password
+  end
+
+  scope "/", RemovemeWeb do
+    pipe_through [:browser]
+
+    live_session :current_user do
+      live "/users/register", UserLive.Registration, :new
+      live "/users/log-in", UserLive.Login, :new
+      live "/users/log-in/:token", UserLive.Confirmation, :new
+    end
+
+    post "/users/log-in", UserSessionController, :create
+    delete "/users/log-out", UserSessionController, :delete
   end
 end

@@ -1,5 +1,5 @@
-defmodule HubbleOrderManagerWeb.PageController do
-  use HubbleOrderManagerWeb, :controller
+defmodule RemovemeWeb.PageController do
+  use RemovemeWeb, :controller
 
   def home(conn, _params) do
     # The home page is often custom made,
