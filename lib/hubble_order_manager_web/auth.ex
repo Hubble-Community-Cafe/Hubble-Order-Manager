@@ -19,7 +19,7 @@ defmodule HubbleOrderManagerWeb.Auth do
   def log_in_session(conn) do
     conn
     |> put_resp_cookie(@session_cookie, "LOGGED_IN", @session_cookie_options)
-    |> redirect(to: "/backoffice")
+    |> redirect(to: "/orders/new")
   end
 
   def fetch_current_session(conn, _opts) do

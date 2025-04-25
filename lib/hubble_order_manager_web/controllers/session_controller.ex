@@ -3,19 +3,12 @@ defmodule HubbleOrderManagerWeb.SessionController do
 
   alias HubbleOrderManagerWeb.Auth
 
-  def test(conn, params) do
-    IO.inspect(params)
-    conn
-    |> put_flash(:info, "Test")
-    |> redirect(to: ~p"/")
-  end
-
   def create(conn, params) do
     create(conn, params, "Welcome back!")
   end
 
   # Token login
-  defp create(conn, %{"user" => token}, info) do
+  defp create(conn, %{"token" => token}, info) do
     login_token = System.get_env("LOGIN_TOKEN")
 
     case token do
@@ -26,8 +19,8 @@ defmodule HubbleOrderManagerWeb.SessionController do
 
       _ ->
         conn
-        |> put_flash(:error, "The link is invalid or it has expired.")
-        |> redirect(to: ~p"/users/log-in")
+        |> put_flash(:error, "Incorrect password.")
+        |> redirect(to: ~p"/login")
     end
   end
 end

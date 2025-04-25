@@ -6,7 +6,6 @@ defmodule HubbleOrderManagerWeb.AuthLive.Login do
     <Layouts.app flash={@flash}>
       <div class="mx-auto max-w-sm space-y-4">
       <.form
-          :let={f}
           for={@form}
           id="login_form_token"
           action={~p"/login"}
@@ -14,7 +13,7 @@ defmodule HubbleOrderManagerWeb.AuthLive.Login do
           phx-trigger-action={@trigger_submit}
         >
           <.input
-            field={f[:token]}
+            field={@form[:token]}
             type="password"
             label="Token"
             autocomplete="current-password"
@@ -29,7 +28,7 @@ defmodule HubbleOrderManagerWeb.AuthLive.Login do
   end
 
   def mount(_params, _session, socket) do
-    form = to_form(%{"token" => nil}, as: "user")
+    form = to_form(%{"token" => nil})
 
     {:ok, assign(socket, form: form, trigger_submit: false)}
   end

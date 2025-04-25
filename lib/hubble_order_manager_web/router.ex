@@ -31,15 +31,16 @@ defmodule HubbleOrderManagerWeb.Router do
       live "/login", AuthLive.Login, :new
     end
 
-    post "/test", SessionController, :test
     post "/login", SessionController, :create
   end
 
-  # scope "/", HubbleOrderManagerWeb do
-  #   pipe_through [:browser, :require_authenticated_session]
+  scope "/", HubbleOrderManagerWeb do
+    pipe_through [:browser, :require_authenticated_session]
 
-  #   live "/backoffice", OrderLive.Form, :new
-  # end
+    live_session :require_authenticated_user do
+      live "/orders/new", OrderLive.Form, :new
+    end
+  end
 
   # Other scopes may use custom stacks.
   scope "/api", HubbleOrderManagerWeb do
