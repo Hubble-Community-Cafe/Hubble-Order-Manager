@@ -2,7 +2,7 @@ import Config
 
 # Configure your database
 config :hubble_order_manager, HubbleOrderManager.Repo,
-  database: Path.expand("../hubble_order_manager_dev.db", __DIR__),
+  database: Path.expand("../database/hubble_order_manager_prod.db", __DIR__),
   pool_size: 5,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true

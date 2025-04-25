@@ -1,0 +1,20 @@
+services:
+  app:
+    # image: ghcr.io/Hubble-Community-Cafe/Hubble-Food:latest
+    build: .
+    ports:
+      - "9999:4000"
+    environment:
+      - AURORA_URL=http://localhost:3000
+      - AURORA_API_KEY=key
+      - PHX_HOST=localhost
+      - LOGIN_TOKEN=beep
+      - SECRET_KEY_BASE=SGTHOTvJb9sCAkJcKHxadir6n8cAioPxHR67mEB0bRZGgGak7z+OlEuoTFxEwIjr
+      - DATABASE_PATH=/app/database/hubble_order_manager_prod.db
+    volumes:
+      - hubble_order_manager_db:/app/database
+    # command: ["sh", "-c", "sleep infinity"]
+    
+volumes:
+  hubble_order_manager_db:
+    driver: local
