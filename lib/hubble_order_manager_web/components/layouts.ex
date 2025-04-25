@@ -13,9 +13,10 @@ defmodule HubbleOrderManagerWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <header class="navbar px-4 sm:px-6 lg:px-8">
-      <div class="flex-1 flex justify-center w-full">
+    <header class="navbar px-4 sm:px-6 lg:px-8 bg-white">
+      <div class="flex-1 flex justify-between w-full">
         <img src={~p"/images/Hubble-Logo.png"} width="200" />
+        <Layouts.theme_toggle />
       </div>
     </header>
 

@@ -10,7 +10,6 @@ defmodule HubbleOrderManagerWeb.OrderLive.Form do
     <Layouts.app flash={@flash}>
       <.header>
         {@page_title}
-        <:subtitle>Add order.</:subtitle>
       </.header>
 
       <.form for={@form} id="order-form" phx-change="validate" phx-submit="save">
