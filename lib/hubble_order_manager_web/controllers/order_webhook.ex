@@ -1,8 +1,6 @@
 defmodule HubbleOrderManagerWeb.OrderWebhook do
   use HubbleOrderManagerWeb, :controller
 
-  @public_key_url "https://api.test.starcommunity.app/.well-known/webhooks.key"
-
   def home(conn, params) do
     x_signature = get_req_header(conn, "x-signature") |> List.first()
 
@@ -39,7 +37,7 @@ defmodule HubbleOrderManagerWeb.OrderWebhook do
         {:ok, public_key}
 
       _ ->
-        case HTTPoison.get(@public_key_url) do
+        case HTTPoison.get(System.get_env("STARCOMMUNITY_WEBHOOK_URL")) do
           {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
             case :public_key.pem_decode(body) do
               [pem_entry] ->
