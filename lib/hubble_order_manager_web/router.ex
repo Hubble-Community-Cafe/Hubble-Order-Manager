@@ -1,13 +1,17 @@
 defmodule HubbleOrderManagerWeb.Router do
   use HubbleOrderManagerWeb, :router
 
+  import HubbleOrderManagerWeb.Auth
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
     plug :put_root_layout, html: {HubbleOrderManagerWeb.Layouts, :root}
+    plug :debug
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :fetch_current_session
   end
 
   pipeline :api do
@@ -15,11 +19,27 @@ defmodule HubbleOrderManagerWeb.Router do
   end
 
   scope "/", HubbleOrderManagerWeb do
-    pipe_through :browser
+    pipe_through [:browser]
 
     live "/", OrderLive.Index, :index
-    live "/new", OrderLive.Form, :new
   end
+
+  scope "/", HubbleOrderManagerWeb do
+    pipe_through [:browser]
+
+    live_session :current_user do
+      live "/login", AuthLive.Login, :new
+    end
+
+    post "/test", SessionController, :test
+    post "/login", SessionController, :create
+  end
+
+  # scope "/", HubbleOrderManagerWeb do
+  #   pipe_through [:browser, :require_authenticated_session]
+
+  #   live "/backoffice", OrderLive.Form, :new
+  # end
 
   # Other scopes may use custom stacks.
   scope "/api", HubbleOrderManagerWeb do
