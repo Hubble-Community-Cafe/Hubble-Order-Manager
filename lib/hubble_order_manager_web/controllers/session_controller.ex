@@ -3,12 +3,12 @@ defmodule HubbleOrderManagerWeb.SessionController do
 
   alias HubbleOrderManagerWeb.Auth
 
-  def create(conn, params) do
-    create(conn, params, "Welcome back!")
+  def login(conn, params) do
+    login(conn, params, "Welcome back!")
   end
 
   # Token login
-  defp create(conn, %{"token" => token}, info) do
+  defp login(conn, %{"token" => token}, info) do
     login_token = System.get_env("LOGIN_TOKEN")
 
     case token do

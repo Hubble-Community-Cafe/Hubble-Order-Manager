@@ -28,10 +28,11 @@ defmodule HubbleOrderManagerWeb.Router do
     pipe_through [:browser]
 
     live_session :current_user do
-      live "/login", AuthLive.Login, :new
+      live "/login", AuthLive.Login
     end
 
-    post "/login", SessionController, :create
+    get "/login/:token", SessionController, :login
+    post "/login", SessionController, :login
   end
 
   scope "/", HubbleOrderManagerWeb do
