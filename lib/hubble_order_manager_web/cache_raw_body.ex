@@ -1,4 +1,4 @@
-defmodule HubbleOrderManagerWeb.Plugs.BodyReader do
+defmodule HubbleOrderManagerWeb.BodyReader do
   @moduledoc """
   A custom body reader that caches the raw body in the connection.
   """

@@ -42,12 +42,11 @@ defmodule HubbleOrderManagerWeb.Endpoint do
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
 
-  # plug HubbleOrderManagerWeb.Plugs.CacheRawBody
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],
     json_decoder: Phoenix.json_library(),
-    body_reader: {HubbleOrderManagerWeb.Plugs.BodyReader, :read_body, []}
+    body_reader: {HubbleOrderManagerWeb.BodyReader, :read_body, []}
 
   plug Plug.MethodOverride
   plug Plug.Head
