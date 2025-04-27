@@ -9,7 +9,10 @@ defmodule HubbleOrderManagerWeb.SessionController do
 
   # Token login
   defp login(conn, %{"token" => token}, info) do
-    login_token = System.get_env("LOGIN_TOKEN")
+    login_token = Application.get_env(:hubble_order_manager, :auth)[:login_token]
+
+    IO.inspect(login_token, label: "Login Token")
+    IO.inspect(token, label: "Token")
 
     case token do
       ^login_token ->

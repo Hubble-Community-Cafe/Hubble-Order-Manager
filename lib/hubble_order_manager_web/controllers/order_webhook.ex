@@ -9,19 +9,25 @@ defmodule HubbleOrderManagerWeb.OrderWebhook do
     {:ok, decoded_signature} <- Base.decode64(x_signature),
     true <- verify_signature(public_key, conn.assigns[:raw_body], decoded_signature) do
 
-      # Signature is valid, proceed with order creation
-      HubbleOrderManager.Orders.create_order(%{
-        order_number: params["order_number"] || "12345"
-      })
-      |> case do
-        {:ok, order} ->
-          IO.puts("Order created successfully: #{inspect(order)}")
+      case params["orderNumber"] do
+        nil ->
+          # Handle the case where orderNumber is not provided
+          IO.puts("Order number is missing")
+          send_resp(conn, 400, "Order number is missing")
+        order ->
+          # Signature is valid, proceed with order creation
+          HubbleOrderManager.Orders.create_order(%{
+            order_number: Integer.to_string(order)
+          })
+          |> case do
+            {:ok, order} ->
+              IO.puts("Order created successfully: #{inspect(order)}")
 
-        {:error, changeset} ->
-          IO.puts("Failed to create order: #{inspect(changeset)}")
-      end
-
-      send_resp(conn, 201, "Success")
+            {:error, changeset} ->
+              IO.puts("Failed to create order: #{inspect(changeset)}")
+          end
+          send_resp(conn, 201, "Success")
+        end
     else
       _ ->
         # Signature is invalid or an error occurred

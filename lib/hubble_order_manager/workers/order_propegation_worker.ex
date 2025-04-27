@@ -31,9 +31,11 @@ defmodule HubbleOrderManager.OrderPropegationWorker do
 
   defp aurora_push(order) do
     url = Application.get_env(:hubble_order_manager, :aurora)[:aurora_url]
+    key = Application.get_env(:hubble_order_manager, :aurora)[:aurora_api_key]
     body = Jason.encode!(%{orderNumber: order.order_number, timeoutSeconds: 300})
 
-    case HTTPoison.post(url <> "/api/orders", body, [{"Content-Type", "application/json"}, {"X-API-Key", "beep"}]) do
+    # Call aurora backend to add order
+    case HTTPoison.post(url <> "/api/orders", body, [{"Content-Type", "application/json"}, {"X-API-Key", key}]) do
       {:ok, %HTTPoison.Response{status_code: 200, body: response_body}} ->
         IO.puts("HTTP call successful: #{response_body}")
 
