@@ -30,27 +30,40 @@ defmodule HubbleOrderManagerWeb.OrderLive.Index do
     if connected?(socket), do: Orders.subscribe()
 
     # Add a default :animation_class key to all orders
-    orders_without_animation = Enum.map(Orders.list_orders(), fn order ->
-      Map.put(order, :animation_class, nil)
-    end)
+    orders = Orders.list_orders()
+          |> Enum.map(fn order ->
+              order
+                |> Map.put(:animation_class, nil)
+            end)
 
     {:ok,
      socket
-     |> assign(:orders, orders_without_animation)}
+     |> assign(:orders, orders)}
   end
 
   @impl true
   def handle_info({:order_created, order}, socket) do
-    # Add a temporary "bounce" class to the new order
-    order_with_animation = Map.put(order, :animation_class, "bounce")
-    # Remove the animation class from all other orders
-    orders_without_animation = Enum.map(socket.assigns.orders, fn order ->
+    # Add bounce animation to new orders
+    order = order
+      |> Map.put(:animation_class, "bounce")
+
+    # Remove the animation class from all other orders to prevent them bouncing on re-render
+    orders = Enum.map(socket.assigns.orders, fn order ->
       Map.put(order, :animation_class, nil)
     end)
 
-
     {:noreply,
      socket
-     |> assign(:orders, [order_with_animation | orders_without_animation])}
+     |> assign(:orders, [order | orders])}
+  end
+
+  @impl true
+  def handle_info({:order_removed, order}, socket) do
+    updated_orders = socket.assigns.orders
+      |> Enum.reject(fn ord ->
+        ord.order_number == order.order_number
+      end)
+
+    {:noreply, assign(socket, orders: updated_orders)}
   end
 end

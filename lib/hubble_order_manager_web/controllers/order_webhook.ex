@@ -31,19 +31,20 @@ defmodule HubbleOrderManagerWeb.OrderWebhook do
 
   defp fetch_public_key do
     current_time = System.system_time(:second)
+    webhook_public_key_url = Application.get_env(:hubble_order_manager, :webhook)[:webhook_public_key_url]
 
     case :ets.lookup(:public_key_cache, :public_key) do
       [{:public_key, public_key, timestamp}] when timestamp > current_time ->
         {:ok, public_key}
 
       _ ->
-        case HTTPoison.get(System.get_env("STARCOMMUNITY_WEBHOOK_URL")) do
+        case HTTPoison.get(webhook_public_key_url) do
           {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
             case :public_key.pem_decode(body) do
               [pem_entry] ->
                 public_key = :public_key.pem_entry_decode(pem_entry)
                 # Cache the public key for 1 hour
-                :ets.insert(:public_key_cache, {:public_key, public_key, System.system_time(:second) + 3600})
+                :ets.insert(:public_key_cache, {:public_key, public_key, current_time + 3600})
                 {:ok, public_key}
 
               _ ->

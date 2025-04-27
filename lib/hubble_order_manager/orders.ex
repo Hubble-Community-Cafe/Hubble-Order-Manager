@@ -57,24 +57,6 @@ defmodule HubbleOrderManager.Orders do
   end
 
   @doc """
-  Updates a order.
-
-  ## Examples
-
-      iex> update_order(order, %{field: new_value})
-      {:ok, %Order{}}
-
-      iex> update_order(order, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_order(%Order{} = order, attrs) do
-    order
-    |> Order.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
   Deletes a order.
 
   ## Examples
@@ -88,6 +70,22 @@ defmodule HubbleOrderManager.Orders do
   """
   def delete_order(%Order{} = order) do
     Repo.delete(order)
+    broadcast({:ok, order}, :order_removed)
+  end
+
+  @doc """
+  Purge orders older than global timeout
+  """
+  def purge_orders() do
+    order_timeout = Application.get_env(:hubble_order_manager, :order)[:order_timeout]
+
+    now = DateTime.utc_now()
+    threshold = DateTime.add(now, -order_timeout)
+
+    Repo.delete_all(
+      from o in Order,
+        where: o.inserted_at < ^threshold
+    )
   end
 
   @doc """

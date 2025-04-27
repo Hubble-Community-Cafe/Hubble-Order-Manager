@@ -1,5 +1,5 @@
 import Config
-
+import Dotenvy
 # config/runtime.exs is executed for all environments, including
 # during releases. It is executed after compilation and before the
 # system starts, so it is typically used to load production configuration
@@ -16,6 +16,57 @@ import Config
 #
 # Alternatively, you can use `mix phx.gen.release` to generate a `bin/server`
 # script that automatically sets the env var above.
+
+
+source!([
+  Path.absname(".env"),
+  System.get_env()
+])
+
+aurora_url =
+  env!("AURORA_URL") ||
+    raise """
+    environment variable AURORA_URL is missing.
+    For example: https://aurora.example.com
+    """
+aurora_api_key =
+  env!("AURORA_API_KEY") ||
+    raise """
+    environment variable AURORA_KEY is missing.
+    """
+
+config :hubble_order_manager, :aurora,
+  aurora_url: aurora_url,
+  aurora_api_key: aurora_api_key
+
+webhook_public_key_url =
+  env!("WEBHOOK_PUBLIC_KEY_URL") ||
+    raise """
+    environment variable WEBHOOK_PUBLIC_KEY_URL is missing.
+    For example: https://api.starcommunity.app/.well-known/webhooks.key
+    """
+
+config :hubble_order_manager, :webhook,
+  webhook_public_key_url: webhook_public_key_url
+
+login_token =
+  env!("LOGIN_TOKEN") ||
+    raise """
+    environment variable LOGIN_TOKEN is missing.
+    For example: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+    """
+config :hubble_order_manager, :auth,
+  login_token: login_token
+
+order_timeout =
+  env!("ORDER_TIMEOUT") ||
+    raise """
+    environment variable ORDER_TIMEOUT is missing.
+    For example: 300
+    """
+config :hubble_order_manager, :order,
+  order_timeout: String.to_integer(order_timeout)
+
 if System.get_env("PHX_SERVER") do
   config :hubble_order_manager, HubbleOrderManagerWeb.Endpoint, server: true
 end

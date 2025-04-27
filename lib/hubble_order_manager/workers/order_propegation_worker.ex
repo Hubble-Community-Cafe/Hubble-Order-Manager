@@ -1,4 +1,4 @@
-defmodule HubbleOrderManager.OrderPropegation do
+defmodule HubbleOrderManager.OrderPropegationWorker do
   use GenServer
 
   alias Phoenix.PubSub
@@ -11,7 +11,6 @@ defmodule HubbleOrderManager.OrderPropegation do
 
   @impl true
   def init(state) do
-    IO.puts("Starting OrderPropegation worker...")
     # Subscribe to the PubSub topic
     PubSub.subscribe(HubbleOrderManager.PubSub, @pubsub_topic)
     {:ok, state}
@@ -19,9 +18,6 @@ defmodule HubbleOrderManager.OrderPropegation do
 
   @impl true
   def handle_info({:order_created, order}, state) do
-
-    IO.puts("Received new order: #{inspect(order)}")
-
     # Push to aurora
     aurora_push(order)
 
@@ -34,7 +30,7 @@ defmodule HubbleOrderManager.OrderPropegation do
   end
 
   defp aurora_push(order) do
-    url = System.get_env("AURORA_URL")
+    url = Application.get_env(:hubble_order_manager, :aurora)[:aurora_url]
     body = Jason.encode!(%{orderNumber: order.order_number, timeoutSeconds: 300})
 
     case HTTPoison.post(url <> "/api/orders", body, [{"Content-Type", "application/json"}, {"X-API-Key", "beep"}]) do

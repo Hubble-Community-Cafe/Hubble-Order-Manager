@@ -7,9 +7,6 @@ defmodule HubbleOrderManager.Application do
 
   @impl true
   def start(_type, _args) do
-    # Load the .env file
-    Dotenv.load()
-
     children = [
       HubbleOrderManager.Repo,
       {Ecto.Migrator,
@@ -17,7 +14,8 @@ defmodule HubbleOrderManager.Application do
       {DNSCluster, query: Application.get_env(:hubble_order_manager, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: HubbleOrderManager.PubSub},
       HubbleOrderManagerWeb.Endpoint,
-      {HubbleOrderManager.OrderPropegation, []}
+      {HubbleOrderManager.OrderPropegationWorker, []},
+      {HubbleOrderManager.OrderTimeoutWorker, []},
     ]
 
     :ets.new(:public_key_cache, [:named_table, :public, :set, {:read_concurrency, true}])

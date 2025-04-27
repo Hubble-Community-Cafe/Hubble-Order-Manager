@@ -56,7 +56,7 @@ defmodule HubbleOrderManager.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
       {:httpoison, "~> 2.0"},
-      {:dotenv, "~> 3.0"}
+      {:dotenvy, "~> 1.0.0"}
     ]
   end
 
