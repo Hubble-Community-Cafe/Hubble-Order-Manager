@@ -1,22 +1,11 @@
-name: Semantic release
+name: Release Docker Image
 
 on:
-  push:
-    branches: 
-    - main
-
-
-permissions:
-  contents: write
-  issues: write
-  pull-requests: write
+  release:
+    types: [published]
 
 jobs:
-  versioning:
-    uses: GEWIS/actions/.github/workflows/versioning.yml@v1
-
   docker:
-    needs: versioning
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -32,10 +21,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Extract tag name
+        id: get-tag
+        run: |
+          echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/${{ github.repository }}:${{ needs.versioning.outputs.next-version }} .
+          docker build -t ghcr.io/${{ github.repository }}:${{ steps.get-tag.outputs.tag }} .
 
       - name: Push Docker image
         run: |
-          docker push ghcr.io/${{ github.repository }}:${{ needs.versioning.outputs.next-version }}
+          docker push ghcr.io/${{ github.repository }}:${{ steps.get-tag.outputs.tag }}
