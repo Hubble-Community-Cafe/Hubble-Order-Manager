@@ -23,4 +23,5 @@ jobs:
       projects: "['.']"
       version: ${{ needs.versioning.outputs.next-version }}
       github-registry: "true"
+      docker-paths: "['hubble-order-manager']"
 
