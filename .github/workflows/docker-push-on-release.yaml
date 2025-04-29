@@ -21,15 +21,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract tag name
-        id: get-tag
+      - name: Extract tag and lowercase repo
+        id: meta
         run: |
           echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          repo_lower=$(echo "${GITHUB_REPOSITORY,,}")
+          echo "repo=${repo_lower}" >> $GITHUB_OUTPUT
 
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/${{ github.repository }}:${{ steps.get-tag.outputs.tag }} .
+          docker build -t ghcr.io/${{ steps.meta.outputs.repo }}:${{ steps.meta.outputs.tag }} .
 
       - name: Push Docker image
         run: |
-          docker push ghcr.io/${{ github.repository }}:${{ steps.get-tag.outputs.tag }}
+          docker push ghcr.io/${{ steps.meta.outputs.repo }}:${{ steps.meta.outputs.tag }}
