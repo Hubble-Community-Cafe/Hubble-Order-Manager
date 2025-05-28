@@ -1,0 +1,6 @@
+- better backoffice
+- pop up in the browser console
+- Strict sanitasion, max 5 char and only numbers
+
+- Losse microservice voor open/close/etc states starcommunity <-> app <-> aurora
+

@@ -31,6 +31,7 @@ defmodule HubbleOrderManagerWeb.OrderLive.Index do
 
     # Add a default :animation_class key to all orders
     orders = Orders.list_orders()
+          |> Enum.sort_by(& Integer.parse(&1.order_number), :desc)
           |> Enum.map(fn order ->
               order
                 |> Map.put(:animation_class, nil)
@@ -48,13 +49,14 @@ defmodule HubbleOrderManagerWeb.OrderLive.Index do
       |> Map.put(:animation_class, "bounce")
 
     # Remove the animation class from all other orders to prevent them bouncing on re-render
-    orders = Enum.map(socket.assigns.orders, fn order ->
-      Map.put(order, :animation_class, nil)
-    end)
+    orders = socket.assigns.orders
+    |> Enum.map(fn order ->
+        Map.put(order, :animation_class, nil)
+      end)
 
     {:noreply,
      socket
-     |> assign(:orders, [order | orders])}
+     |> assign(:orders, Enum.sort_by([order | orders], & Integer.parse(&1.order_number), :desc))}
   end
 
   @impl true
