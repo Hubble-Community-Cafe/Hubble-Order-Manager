@@ -1,4 +1,4 @@
-defmodule HubbleOrderManagerWeb.OrderLive.Form do
+defmodule HubbleOrderManagerWeb.OrderLive.Edit do
   use HubbleOrderManagerWeb, :live_view
 
   alias HubbleOrderManager.Orders
@@ -9,7 +9,7 @@ defmodule HubbleOrderManagerWeb.OrderLive.Form do
     ~H"""
     <Layouts.app flash={@flash}>
       <.header>
-        {@page_title}
+        Edit order
       </.header>
 
       <.form for={@form} id="order-form" phx-change="validate" phx-submit="save">
@@ -25,6 +25,8 @@ defmodule HubbleOrderManagerWeb.OrderLive.Form do
             id={"order-#{order.inserted_at}"}
             class={"w-40 rounded text-5xl text-center border #{order.animation_class || ""}"}
             phx-hook="RemoveAnimation"
+            phx-click="delete"
+            phx-value-order_id={order.id}
           >
             {order.order_number}
           </div>
@@ -47,23 +49,15 @@ defmodule HubbleOrderManagerWeb.OrderLive.Form do
             end)
 
     {:ok,
-     socket
-     |> assign(:return_to, return_to(params["return_to"]))
-     |> assign(:orders, orders)
-     |> apply_action(socket.assigns.live_action, params)}
+      socket
+      |> assign(:return_to, return_to(params["return_to"]))
+      |> assign(:orders, orders)
+      |> assign(:order, %Order{})
+      |> assign(:form, to_form(Order.changeset(%Order{}, %{})))}
   end
 
   defp return_to("show"), do: "show"
   defp return_to(_), do: "index"
-
-  defp apply_action(socket, :new, _params) do
-    order = %Order{}
-
-    socket
-    |> assign(:page_title, "New Order")
-    |> assign(:order, order)
-    |> assign(:form, to_form(Orders.change_order(order)))
-  end
 
   @impl true
   def handle_event("validate", %{"order" => order_params}, socket) do
@@ -72,15 +66,32 @@ defmodule HubbleOrderManagerWeb.OrderLive.Form do
   end
 
   def handle_event("save", %{"order" => order_params}, socket) do
-    save_order(socket, socket.assigns.live_action, order_params)
+    save_order(socket, order_params)
   end
 
-  defp save_order(socket, :new, order_params) do
+  def handle_event("delete", %{"order_id" => order_id}, socket) do
+    order = Orders.get_order!(order_id)
+    delete_order(socket, order)
+  end
+
+  defp save_order(socket, order_params) do
     case Orders.create_order(order_params) do
       {:ok, _order} ->
         {:noreply,
          socket
          |> put_flash(:info, "Order created successfully")}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, form: to_form(changeset))}
+    end
+  end
+
+  defp delete_order(socket, order) do
+    case Orders.delete_order(order) do
+      {:ok, _order} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Order deleted successfully")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}

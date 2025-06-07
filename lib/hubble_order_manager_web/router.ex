@@ -39,7 +39,7 @@ defmodule HubbleOrderManagerWeb.Router do
     pipe_through [:browser, :require_authenticated_session]
 
     live_session :require_authenticated_user do
-      live "/orders/new", OrderLive.Form, :new
+      live "/orders/edit", OrderLive.Edit
     end
   end
 
