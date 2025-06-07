@@ -69,8 +69,6 @@ defmodule HubbleOrderManager.Orders do
 
   """
   def delete_order(%Order{} = order) do
-    # Print
-    IO.inspect(order, label: "Deleting order")
     broadcast({:ok, order}, :order_removed)
     Repo.delete(order)
   end
