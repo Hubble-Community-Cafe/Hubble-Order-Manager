@@ -49,14 +49,36 @@ webhook_public_key_url =
 config :hubble_order_manager, :webhook,
   webhook_public_key_url: webhook_public_key_url
 
-login_token =
-  env!("LOGIN_TOKEN") ||
-    raise """
-    environment variable LOGIN_TOKEN is missing.
-    For example: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
-    """
+azure_tenant_id =
+  env!("AZURE_TENANT_ID") ||
+    raise "environment variable AZURE_TENANT_ID is missing."
+
+oidc_client_id =
+  env!("OIDC_CLIENT_ID") ||
+    raise "environment variable OIDC_CLIENT_ID is missing."
+
+oidc_client_secret =
+  env!("OIDC_CLIENT_SECRET") ||
+    raise "environment variable OIDC_CLIENT_SECRET is missing."
+
+azure_allowed_group_id = System.get_env("AZURE_ALLOWED_GROUP_ID")
+
+oidc_redirect_uri =
+  env!("OIDC_REDIRECT_URI") ||
+    raise "environment variable OIDC_REDIRECT_URI is missing. For example: https://orders.hubble.cafe/auth/microsoft/callback"
+
 config :hubble_order_manager, :auth,
-  login_token: login_token
+  allowed_group_id: azure_allowed_group_id,
+  oidc_redirect_uri: oidc_redirect_uri
+
+config :openid_connect, :providers,
+  microsoft: %{
+    discovery_document_uri: "https://login.microsoftonline.com/#{azure_tenant_id}/v2.0/.well-known/openid-configuration",
+    client_id: oidc_client_id,
+    client_secret: oidc_client_secret,
+    response_type: "code",
+    scope: "openid email profile"
+  }
 
 order_timeout =
   env!("ORDER_TIMEOUT") ||
@@ -66,6 +88,15 @@ order_timeout =
     """
 config :hubble_order_manager, :order,
   order_timeout: String.to_integer(order_timeout)
+
+# Branding configuration (defaults to Hubble)
+config :hubble_order_manager, :branding,
+  bar_name: System.get_env("BAR_NAME") || "Hubble Community Café",
+  bar_logo_url: System.get_env("BAR_LOGO_URL") || "/images/Hubble-Logo.png",
+  favicon_url: System.get_env("FAVICON_URL") || "/images/hubble-favicon.ico",
+  primary_color: System.get_env("PRIMARY_COLOR") || "#0f4d64",
+  secondary_color: System.get_env("SECONDARY_COLOR") || "#bde8ec",
+  accent_color: System.get_env("ACCENT_COLOR") || "#62cad3"
 
 if System.get_env("PHX_SERVER") do
   config :hubble_order_manager, HubbleOrderManagerWeb.Endpoint, server: true

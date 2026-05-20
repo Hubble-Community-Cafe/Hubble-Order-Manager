@@ -1,33 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style={"--brand-primary: #{assigns[:primary_color] || "#0f4d64"}; --brand-secondary: #{assigns[:secondary_color] || "#bde8ec"}; --brand-accent: #{assigns[:accent_color] || "#62cad3"};"}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title default="Order Tracker" suffix=" · Hubble Community Café">
+    <.live_title default="Order Tracker" suffix={" · #{assigns[:bar_name] || "Hubble Community Café"}"}>
       {assigns[:page_title]}
     </.live_title>
+    <link rel="icon" href={assigns[:favicon_url] || "/images/hubble-favicon.ico"} />
     <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
     <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
-    </script>
-    <script>
-      (() => {
-        const setTheme = (theme) => {
-          if (theme === "system") {
-            localStorage.removeItem("phx:theme");
-            document.documentElement.removeAttribute("data-theme");
-          } else {
-            localStorage.setItem("phx:theme", theme);
-            document.documentElement.setAttribute("data-theme", theme);
-          }
-        };
-        setTheme(localStorage.getItem("phx:theme") || "system");
-        window.addEventListener("storage", (e) => e.key === "phx:theme" && setTheme(e.newValue || "system"));
-        window.addEventListener("phx:set-theme", ({ detail: { theme } }) => setTheme(theme));
-      })();
     </script>
   </head>
   <body>

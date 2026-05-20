@@ -2,16 +2,17 @@ defmodule HubbleOrderManagerWeb.Router do
   use HubbleOrderManagerWeb, :router
 
   import HubbleOrderManagerWeb.Auth
+  import HubbleOrderManagerWeb.Branding, only: [fetch_branding: 2]
 
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
     plug :put_root_layout, html: {HubbleOrderManagerWeb.Layouts, :root}
-    plug :debug
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_session
+    plug :fetch_branding
   end
 
   pipeline :api do
@@ -21,24 +22,22 @@ defmodule HubbleOrderManagerWeb.Router do
   scope "/", HubbleOrderManagerWeb do
     pipe_through [:browser]
 
-    live "/", OrderLive.Index, :index
+    live_session :public, on_mount: {HubbleOrderManagerWeb.Branding, :default} do
+      live "/", OrderLive.Index, :index
+    end
   end
 
-  scope "/", HubbleOrderManagerWeb do
+  scope "/auth", HubbleOrderManagerWeb do
     pipe_through [:browser]
 
-    live_session :current_user do
-      live "/login", AuthLive.Login
-    end
-
-    get "/login/:token", SessionController, :login
-    post "/login", SessionController, :login
+    get "/microsoft", OIDCController, :request
+    get "/microsoft/callback", OIDCController, :callback
   end
 
   scope "/", HubbleOrderManagerWeb do
     pipe_through [:browser, :require_authenticated_session]
 
-    live_session :require_authenticated_user do
+    live_session :require_authenticated_user, on_mount: {HubbleOrderManagerWeb.Branding, :default} do
       live "/orders/edit", OrderLive.Edit
     end
   end

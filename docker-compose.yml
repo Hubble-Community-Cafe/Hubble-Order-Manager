@@ -8,9 +8,23 @@ services:
       - AURORA_URL=http://localhost:3000
       - AURORA_API_KEY=key
       - PHX_HOST=localhost
-      - LOGIN_TOKEN=beep
+      - AZURE_TENANT_ID=your-tenant-id
+      - OIDC_CLIENT_ID=your-client-id
+      - OIDC_CLIENT_SECRET=your-client-secret
+      - OIDC_REDIRECT_URI=http://localhost:9999/auth/microsoft/callback
+      # Optional: restrict to a specific Entra group (omit to allow all tenant users)
+      - AZURE_ALLOWED_GROUP_ID=your-group-object-id
       - SECRET_KEY_BASE=SGTHOTvJb9sCAkJcKHxadir6n8cAioPxHR67mEB0bRZGgGak7z+OlEuoTFxEwIjr
       - DATABASE_PATH=/app/database/hubble_order_manager_prod.db
+      - WEBHOOK_PUBLIC_KEY_URL=https://api.test.starcommunity.app/.well-known/webhooks.key
+      - ORDER_TIMEOUT=300
+      # Branding (defaults to Hubble if omitted)
+      # - BAR_NAME=Meteor Community Café
+      # - BAR_LOGO_URL=/images/Meteor-Logo.png
+      # - FAVICON_URL=/images/meteor-favicon.ico
+      # - PRIMARY_COLOR=#32373c
+      # - SECONDARY_COLOR=#0693e3
+      # - ACCENT_COLOR=#ff6900 
     volumes:
       - hubble_order_manager_db:/app/database
     # command: ["sh", "-c", "sleep infinity"]

@@ -11,12 +11,18 @@ defmodule HubbleOrderManagerWeb.Layouts do
 
   embed_templates "layouts/*"
 
+  defp logo_url do
+    config = Application.get_env(:hubble_order_manager, :branding, [])
+    Keyword.get(config, :bar_logo_url, "/images/Hubble-Logo.png")
+  end
+
   def app(assigns) do
+    assigns = Map.put(assigns, :logo_url, logo_url())
+
     ~H"""
     <header class="navbar px-4 sm:px-6 lg:px-8 bg-white">
       <div class="flex-1 flex justify-between w-full">
-        <img src={~p"/images/Hubble-Logo.png"} width="200" />
-        <Layouts.theme_toggle />
+        <img src={@logo_url} width="200" />
       </div>
     </header>
 
@@ -73,28 +79,4 @@ defmodule HubbleOrderManagerWeb.Layouts do
     """
   end
 
-  @doc """
-  Provides dark vs light theme toggle based on themes defined in app.css.
-
-  See <head> in root.html.heex which applies the theme before page load.
-  """
-  def theme_toggle(assigns) do
-    ~H"""
-    <div class="card relative flex flex-row items-center border-2 border-base-300 bg-base-300 rounded-full">
-      <div class="absolute w-[33%] h-full rounded-full border-1 border-base-200 bg-base-100 brightness-200 left-0 [[data-theme=light]_&]:left-[33%] [[data-theme=dark]_&]:left-[66%] transition-[left]" />
-
-      <button phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "system"})} class="flex p-2">
-        <.icon name="hero-computer-desktop-micro" class="size-4 opacity-75 hover:opacity-100" />
-      </button>
-
-      <button phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "light"})} class="flex p-2">
-        <.icon name="hero-sun-micro" class="size-4 opacity-75 hover:opacity-100" />
-      </button>
-
-      <button phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "dark"})} class="flex p-2">
-        <.icon name="hero-moon-micro" class="size-4 opacity-75 hover:opacity-100" />
-      </button>
-    </div>
-    """
-  end
 end
