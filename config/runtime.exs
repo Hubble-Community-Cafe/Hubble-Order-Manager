@@ -67,6 +67,15 @@ order_timeout =
 config :hubble_order_manager, :order,
   order_timeout: String.to_integer(order_timeout)
 
+# Branding configuration (defaults to Hubble)
+config :hubble_order_manager, :branding,
+  bar_name: System.get_env("BAR_NAME") || "Hubble Community Café",
+  bar_logo_url: System.get_env("BAR_LOGO_URL") || "/images/Hubble-Logo.png",
+  favicon_url: System.get_env("FAVICON_URL") || "/images/hubble-favicon.ico",
+  primary_color: System.get_env("PRIMARY_COLOR") || "#0f4d64",
+  secondary_color: System.get_env("SECONDARY_COLOR") || "#bde8ec",
+  accent_color: System.get_env("ACCENT_COLOR") || "#62cad3"
+
 if System.get_env("PHX_SERVER") do
   config :hubble_order_manager, HubbleOrderManagerWeb.Endpoint, server: true
 end
