@@ -45,8 +45,8 @@ The app is configured via environment variables. See `.env.example` for a full l
 | `WEBHOOK_PUBLIC_KEY_URL` | Star Community webhook public key URL | `https://api.starcommunity.app/.well-known/webhooks.key` |
 | `ORDER_TIMEOUT` | Seconds before orders are auto-removed | `300` |
 | `AZURE_TENANT_ID` | Microsoft Entra tenant ID | `xxxxxxxx-xxxx-...` |
-| `AZURE_CLIENT_ID` | Azure app registration client ID | `xxxxxxxx-xxxx-...` |
-| `AZURE_CLIENT_SECRET` | Azure app registration client secret | `your-secret` |
+| `OIDC_CLIENT_ID` | OIDC client ID (from app registration) | `xxxxxxxx-xxxx-...` |
+| `OIDC_CLIENT_SECRET` | OIDC client secret (from app registration) | `your-secret` |
 | `OIDC_REDIRECT_URI` | Full callback URL for OIDC login | `https://your-domain/auth/microsoft/callback` |
 | `SECRET_KEY_BASE` | Secret for signing cookies/sessions | `mix phx.gen.secret` |
 | `DATABASE_PATH` | Path to SQLite database file (prod only) | `/app/database/orders.db` |

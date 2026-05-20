@@ -53,13 +53,13 @@ azure_tenant_id =
   env!("AZURE_TENANT_ID") ||
     raise "environment variable AZURE_TENANT_ID is missing."
 
-azure_client_id =
-  env!("AZURE_CLIENT_ID") ||
-    raise "environment variable AZURE_CLIENT_ID is missing."
+oidc_client_id =
+  env!("OIDC_CLIENT_ID") ||
+    raise "environment variable OIDC_CLIENT_ID is missing."
 
-azure_client_secret =
-  env!("AZURE_CLIENT_SECRET") ||
-    raise "environment variable AZURE_CLIENT_SECRET is missing."
+oidc_client_secret =
+  env!("OIDC_CLIENT_SECRET") ||
+    raise "environment variable OIDC_CLIENT_SECRET is missing."
 
 azure_allowed_group_id = System.get_env("AZURE_ALLOWED_GROUP_ID")
 
@@ -74,8 +74,8 @@ config :hubble_order_manager, :auth,
 config :openid_connect, :providers,
   microsoft: %{
     discovery_document_uri: "https://login.microsoftonline.com/#{azure_tenant_id}/v2.0/.well-known/openid-configuration",
-    client_id: azure_client_id,
-    client_secret: azure_client_secret,
+    client_id: oidc_client_id,
+    client_secret: oidc_client_secret,
     response_type: "code",
     scope: "openid email profile"
   }
