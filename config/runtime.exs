@@ -49,14 +49,36 @@ webhook_public_key_url =
 config :hubble_order_manager, :webhook,
   webhook_public_key_url: webhook_public_key_url
 
-login_token =
-  env!("LOGIN_TOKEN") ||
-    raise """
-    environment variable LOGIN_TOKEN is missing.
-    For example: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
-    """
+azure_tenant_id =
+  env!("AZURE_TENANT_ID") ||
+    raise "environment variable AZURE_TENANT_ID is missing."
+
+azure_client_id =
+  env!("AZURE_CLIENT_ID") ||
+    raise "environment variable AZURE_CLIENT_ID is missing."
+
+azure_client_secret =
+  env!("AZURE_CLIENT_SECRET") ||
+    raise "environment variable AZURE_CLIENT_SECRET is missing."
+
+azure_allowed_group_id = System.get_env("AZURE_ALLOWED_GROUP_ID")
+
+oidc_redirect_uri =
+  env!("OIDC_REDIRECT_URI") ||
+    raise "environment variable OIDC_REDIRECT_URI is missing. For example: https://orders.hubble.cafe/auth/microsoft/callback"
+
 config :hubble_order_manager, :auth,
-  login_token: login_token
+  allowed_group_id: azure_allowed_group_id,
+  oidc_redirect_uri: oidc_redirect_uri
+
+config :openid_connect, :providers,
+  microsoft: %{
+    discovery_document_uri: "https://login.microsoftonline.com/#{azure_tenant_id}/v2.0/.well-known/openid-configuration",
+    client_id: azure_client_id,
+    client_secret: azure_client_secret,
+    response_type: "code",
+    scope: "openid email profile"
+  }
 
 order_timeout =
   env!("ORDER_TIMEOUT") ||

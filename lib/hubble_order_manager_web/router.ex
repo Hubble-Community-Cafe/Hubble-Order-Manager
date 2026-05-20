@@ -9,7 +9,6 @@ defmodule HubbleOrderManagerWeb.Router do
     plug :fetch_session
     plug :fetch_live_flash
     plug :put_root_layout, html: {HubbleOrderManagerWeb.Layouts, :root}
-    plug :debug
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_session
@@ -28,15 +27,11 @@ defmodule HubbleOrderManagerWeb.Router do
     end
   end
 
-  scope "/", HubbleOrderManagerWeb do
+  scope "/auth", HubbleOrderManagerWeb do
     pipe_through [:browser]
 
-    live_session :current_user, on_mount: {HubbleOrderManagerWeb.Branding, :default} do
-      live "/login", AuthLive.Login
-    end
-
-    get "/login/:token", SessionController, :login
-    post "/login", SessionController, :login
+    get "/microsoft", OIDCController, :request
+    get "/microsoft/callback", OIDCController, :callback
   end
 
   scope "/", HubbleOrderManagerWeb do

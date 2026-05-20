@@ -30,11 +30,6 @@ defmodule HubbleOrderManagerWeb.Auth do
     end
   end
 
-  def debug(conn, _opts) do
-    IO.inspect(Process.get(:plug_masked_csrf_token), label: "CSRF Token")
-    conn
-  end
-
   defp ensure_session_token(conn) do
     conn = fetch_cookies(conn, signed: [@session_cookie])
 
@@ -52,8 +47,7 @@ defmodule HubbleOrderManagerWeb.Auth do
       conn
     else
       conn
-      |> put_flash(:error, "You must log in to access this page.")
-      |> redirect(to: ~p"/")
+      |> redirect(to: ~p"/auth/microsoft")
       |> halt()
     end
   end

@@ -8,7 +8,12 @@ services:
       - AURORA_URL=http://localhost:3000
       - AURORA_API_KEY=key
       - PHX_HOST=localhost
-      - LOGIN_TOKEN=beep
+      - AZURE_TENANT_ID=your-tenant-id
+      - AZURE_CLIENT_ID=your-client-id
+      - AZURE_CLIENT_SECRET=your-client-secret
+      - OIDC_REDIRECT_URI=http://localhost:9999/auth/microsoft/callback
+      # Optional: restrict to a specific Entra group (omit to allow all tenant users)
+      - AZURE_ALLOWED_GROUP_ID=your-group-object-id
       - SECRET_KEY_BASE=SGTHOTvJb9sCAkJcKHxadir6n8cAioPxHR67mEB0bRZGgGak7z+OlEuoTFxEwIjr
       - DATABASE_PATH=/app/database/hubble_order_manager_prod.db
       - WEBHOOK_PUBLIC_KEY_URL=https://api.test.starcommunity.app/.well-known/webhooks.key
