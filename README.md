@@ -69,7 +69,7 @@ The app supports configurable branding so the same Docker image can be used for 
 
 ## Changelogs
 
-#### v2.0.0
+#### v1.2.0
 - Microsoft Entra ID (Azure AD) authentication via OpenID Connect
 - Configurable branding (logo, colors, favicon, name) via environment variables
 - Removed token-based login
