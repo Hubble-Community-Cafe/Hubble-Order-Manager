@@ -46,6 +46,7 @@ defmodule HubbleOrderManagerWeb.Router do
   scope "/api", HubbleOrderManagerWeb do
     pipe_through :api
 
+    get "/orders", OrderController, :index
     post "/orders/webhook", OrderWebhook, :home
   end
 
